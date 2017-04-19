@@ -13,7 +13,7 @@ public class JogarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jogar);
-
+        //TODO: INTERFACE DE JOGAR
     }
 
 }
