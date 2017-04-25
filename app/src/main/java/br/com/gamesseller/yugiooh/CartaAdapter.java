@@ -1,6 +1,7 @@
 package br.com.gamesseller.yugiooh;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
