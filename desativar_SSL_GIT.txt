@@ -1,36 +1,9 @@
 
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git pull origin master
-fatal: Not a git repository (or any of the parent directories): .git
+C:\Users\16165846\Documents\Java Projects\YUIGILICIA>git init
+Initialized empty Git repository in C:/Users/16165846/Documents/Java Projects/YUIGILICIA/.git/
 
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git init
-Initialized empty Git repository in C:/Users/16165846/Documents/Java Projects/YUGILICIA/.git/
+C:\Users\16165846\Documents\Java Projects\YUIGILICIA>git remote add origin https://github.com/echobiel/YUGILICIA.git
 
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git pull origin master
-fatal: 'origin' does not appear to be a git repository
-fatal: Could not read from remote repository.
+C:\Users\16165846\Documents\Java Projects\YUIGILICIA>git config --local http.sslVerify false
 
-Please make sure you have the correct access rights
-and the repository exists.
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git pull origin master
-From https://github.com/echobiel/YUGILICIA
- * branch            master     -> FETCH_HEAD
-Already up-to-date.
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git pull origin master
-fatal: Not a git repository (or any of the parent directories): .git
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git init
-Initialized empty Git repository in C:/Users/16165846/Documents/Java Projects/YUGILICIA/.git/
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git remote add origin https://github.com/echobiel/YUGILICIA.git
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git pull origin master
-fatal: unable to access 'https://github.com/echobiel/YUGILICIA.git/': SSL certificate problem: self signed certificate in certificate chain
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git config --local http.sslVerify false
-
-C:\Users\16165846\Documents\Java Projects\YUGILICIA>git pull origin master
-remote: Counting objects: 383, done.
-remote: Compressing objects: 100% (187/187), done.
-Receiving objects:  66% (253/383), 1.38 MiB | 337.00 KiB/s
+C:\Users\16165846\Documents\Java Projects\YUIGILICIA>git pull origin master
