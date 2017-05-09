@@ -49,6 +49,12 @@
                 android:text="Criar uma sala"
                 android:background="@color/colorPrimaryDark" />
         </LinearLayout>
+        <ListView android:id="@+id/lista_dispositivos_pareados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stackFromBottom="true"
+            android:layout_weight="1"
+            />
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
