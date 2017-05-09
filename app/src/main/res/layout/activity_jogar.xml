@@ -10,5 +10,4 @@
 
     <include layout="@layout/content_jogar" />
 
-
 </android.support.design.widget.CoordinatorLayout>

@@ -1,4 +1,4 @@
-package br.com.gamesseller.yugiooh;
+/*package br.com.gamesseller.yugiooh;
 
 import java.util.Set;
 
@@ -23,9 +23,11 @@ public class DeviceListActivity extends ListActivity {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
 
+
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
                 String deviceBTName = device.getName();
+                deviceMACAddress = device.getAddress();
                 btArrayAdapter.add("Duelar com " + deviceBTName);
             }
         }
@@ -41,5 +43,5 @@ public class DeviceListActivity extends ListActivity {
         setResult(RESULT_OK, intent);
         finish();
     }
-}
+}*/
 
