@@ -174,5 +174,7 @@ public class DeviceListActivity extends ListActivity {
             }
         }
     };
+
+
 }
 

@@ -36,7 +36,7 @@ public class JogarActivity extends Activity {
 
     private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 
-    private final int REQUEST_CONNECT_DEVICE = 1;
+
     private final int REQUEST_DISCONNECT_DEVICE = 2;
 
     private BluetoothAdapter meuAdaptadorBluetooth = null;
@@ -74,14 +74,21 @@ public class JogarActivity extends Activity {
         btnListaDeDispositivosPareados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checarEstadoDoBluetooth();
+                checarEstadoDoBluetoothCliente();
+            }
+        });
+
+        btnServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checarEstadoDoBluetoothServer();
             }
         });
 
 
     }
 
-    public void checarEstadoDoBluetooth(){
+    public void checarEstadoDoBluetoothCliente(){
 
         //Verificar se o bluetooth é suportado no dispositivo
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -92,14 +99,7 @@ public class JogarActivity extends Activity {
         //Se o bluetooth está ativado
         if (mBluetoothAdapter.isEnabled()) {
 
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-            // If there are paired devices
-            if (pairedDevices.size() > 0) {
-                // Loop through paired devices
-                Intent intent = new Intent();
-                intent.setClass(JogarActivity.this, DeviceListActivity.class);
-                startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
-            }
+            startActivity(new Intent(this, ArenaCliente.class));
 
         }else{
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -108,66 +108,24 @@ public class JogarActivity extends Activity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void checarEstadoDoBluetoothServer(){
 
-        Toast.makeText(this, "" + requestCode + " // " + REQUEST_CONNECT_DEVICE, Toast.LENGTH_LONG).show();
-        switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    //Cancelar a descoberta
-                    meuAdaptadorBluetooth.cancelDiscovery();
-
-                    // Obtem o endereço do dispositivo
-                    String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    // Obtem o BluetoothDevice
-                    mmDevice = meuAdaptadorBluetooth.getRemoteDevice(address);
-                    try {
-                        // Cria o socket utilizando o UUID
-                        mmSocket = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
-                        // Conecta ao dispositivo escolhido
-                        mmSocket.connect();
-                        // Obtem os fluxos de entrada e saida que lidam com transmissões através do socket
-                        mmInStream = mmSocket.getInputStream();
-                        mmOutStream = mmSocket.getOutputStream();
-
-                        // Saida:
-                        // Envio de uma mensagem pelo .write
-                        String enviada = "Teste Rone";
-                        byte[] send = enviada.getBytes();
-                        mmOutStream.write(send);
-
-                        // Entrada:
-                        // bytes returnados da read()
-                        int bytes;
-                        // buffer de memória para o fluxo
-                        byte[] read = new byte[1024];
-
-                        // Continuar ouvindo o InputStream enquanto conectado
-                        // O loop principal é dedicado a leitura do InputStream
-                        while (true) {
-                            try {
-                                // Read from the InputStream
-                                bytes = mmInStream.read(read);
-
-                                String readMessage = new String(read);
-                                Toast.makeText(this, readMessage, Toast.LENGTH_LONG).show();
-
-                            } catch (IOException e) {
-                                Toast.makeText(this, "Ocorreu um erro no recebimento da mensagem!", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                    }
-                    catch(IOException e){
-                        Toast.makeText(this, "Ocorreu um erro!", Toast.LENGTH_LONG).show();
-                    }
-                }
-                break;
-            case REQUEST_DISCONNECT_DEVICE:
-                Toast.makeText(this, "O usuário não está conectado!", Toast.LENGTH_LONG).show();
-                break;
+        //Verificar se o bluetooth é suportado no dispositivo
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //Se o mBluetoothAdapter estiver null o dispositivo não tem o necessário para o bluetooth
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this,"Dispostivo não suporta o Bluetooth",Toast.LENGTH_LONG);
         }
+        //Se o bluetooth está ativado
+        if (mBluetoothAdapter.isEnabled()) {
+
+            startActivity(new Intent(this, ArenaServidor.class));
+
+        }else{
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
     }
+
 }
