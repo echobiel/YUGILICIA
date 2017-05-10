@@ -32,30 +32,6 @@ public class JogarActivity extends Activity {
     Context context;
 
     private static final int REQUEST_ENABLE_BT = 1;
-    private static final int REQUEST_PAIRED_DEVICE = 2;
-
-    private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-
-
-    private final int REQUEST_DISCONNECT_DEVICE = 2;
-
-    private BluetoothAdapter meuAdaptadorBluetooth = null;
-
-    private BluetoothSocket mmSocket = null;
-    private BluetoothDevice mmDevice = null;
-
-    private InputStream mmInStream = null;
-    private OutputStream mmOutStream = null;
-
-    //- Exclusivo do servidor
-    private BluetoothServerSocket mmServerSocket;
-    private static final String NAME = "AppBT2_servidor";
-    private int mState;
-
-    // Constants that indicate the current connection state
-    // Cria contanstes de estado
-    public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 2;  // now connected to a remote device
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

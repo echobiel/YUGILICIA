@@ -15,28 +15,25 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ArenaCliente extends Activity {
     /** Called when the activity is first created. */
 
     private static final int REQUEST_ENABLE_BT = 1;
-    private BluetoothAdapter meuAdaptadorBluetooth = null;
-    private BluetoothServerSocket mmServerSocket;
+
     private final int REQUEST_CONNECT_DEVICE = 1;
-    private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+    private BluetoothAdapter meuAdaptadorBluetooth = null;
 
-    // Name for the SDP record when creating server socket
-    private static final String NAME = "AppBT2_servidor";
-    private int mState;
-
-    // Constants that indicate the current connection state
-    // Cria contanstes de estado
-    public static final int STATE_CONNECTING = 1; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 2;  // now connected to a remote device
+    private BluetoothSocket mmSocket = null;
+    private BluetoothDevice mmDevice = null;
 
     private InputStream mmInStream = null;
     private OutputStream mmOutStream = null;
+
+    // Unique UUID for this application
+    private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,84 +76,62 @@ public class ArenaCliente extends Activity {
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         switch (requestCode) {
-            case REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
+            case REQUEST_CONNECT_DEVICE:
+                // When DeviceListActivity returns with a device to connect
+                Log.d("resultCode", resultCode + "");
                 if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth agora está habilidado
-                    // Escuta da solicitação de conexão
+                    //Cancelar a descoberta
+                    meuAdaptadorBluetooth.cancelDiscovery();
+
+                    // Obtem o endereço do dispositivo
+                    String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    // Obtem o BluetoothDevice
+                    mmDevice = meuAdaptadorBluetooth.getRemoteDevice(address);
                     try {
                         // Cria o socket utilizando o UUID
-                        mmServerSocket = meuAdaptadorBluetooth.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
+                        mmSocket = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
+                        // Conecta ao dispositivo escolhido
+                        mmSocket.connect();
+                        // Obtem os fluxos de entrada e saida que lidam com transmissões através do socket
+                        mmInStream = mmSocket.getInputStream();
+                        mmOutStream = mmSocket.getOutputStream();
 
-                        // This is a blocking call and will only return on a
-                        // successful connection or an exception
-                        BluetoothSocket mmSocket = mmServerSocket.accept();
+                        // Saida:
+                        // Envio de uma mensagem pelo .write
+                        String enviada = "Teste Rone";
+                        byte[] send = enviada.getBytes();
+                        mmOutStream.write(send);
 
-                        // If a connection was accepted
-                        if (mmSocket != null) {
-                            synchronized (ArenaCliente.this) {
-                                switch (mState) {
-                                    case STATE_CONNECTING:
-                                        // Situation normal. Start the connected thread.
-                                        try {
+                        // Entrada:
+                        // bytes returnados da read()
+                        int bytes;
+                        // buffer de memória para o fluxo
+                        byte[] read = new byte[1024];
 
-                                            // Obtem os fluxos de entrada e saida que lidam com transmissões através do socket
-                                            mmInStream = mmSocket.getInputStream();
-                                            mmOutStream = mmSocket.getOutputStream();
+                        // Continuar ouvindo o InputStream enquanto conectado
+                        // O loop principal é dedicado a leitura do InputStream
+                        while (true) {
+                            try {
+                                // Read from the InputStream
+                                bytes = mmInStream.read(read);
 
-                                            // Entrada:
-                                            // bytes returnados da read()
-                                            int bytes;
-                                            // buffer de memória para o fluxo
-                                            byte[] read = new byte[1024];
+                                String readMessage = new String(read);
+                                Toast.makeText(this, readMessage, Toast.LENGTH_LONG).show();
 
-                                            // Continuar ouvindo o InputStream enquanto conectado
-                                            // O loop principal é dedicado a leitura do InputStream
-                                            while (true) {
-                                                try {
-                                                    // Read from the InputStream
-                                                    bytes = mmInStream.read(read);
-                                                    String readMessage = new String(read);
-                                                    Toast.makeText(this, readMessage, Toast.LENGTH_LONG).show();
-
-                                                    // Reenvio da mensagem
-                                                    byte[] send = readMessage.getBytes();
-                                                    mmOutStream.write(send);
-
-                                                } catch (IOException e) {
-                                                    Toast.makeText(this, "Ocorreu um erro na transmissão da mensagem!", Toast.LENGTH_LONG).show();
-                                                }
-                                            }
-
-                                        }
-                                        catch(IOException e){
-                                            Toast.makeText(this, "Ocorreu um erro!", Toast.LENGTH_LONG).show();
-                                        }
-
-                                        break;
-                                    case STATE_CONNECTED:
-                                        // Either not ready or already connected. Terminate new socket.
-                                        try {
-                                            mmSocket.close();
-                                        } catch (IOException e) {
-                                            Toast.makeText(this, "Nao foi possivel fechar o socket!", Toast.LENGTH_LONG).show();
-                                        }
-                                        break;
-                                }
+                            } catch (IOException e) {
+                                Toast.makeText(this, "Ocorreu um erro no recebimento da mensagem!", Toast.LENGTH_LONG).show();
                             }
                         }
 
                     }
                     catch(IOException e){
-                        Toast.makeText(this, "Ocorreu um erro!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Ocorreu um erro! - " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.d("test", "Ocorreu um erro! - " + e.getMessage());
                     }
-
-                } else {
-                    // User did not enable Bluetooth or an error occured
-                    Toast.makeText(this, "Bluetooth não habilitado corretamente", Toast.LENGTH_SHORT).show();
-                    finish();
                 }
+                break;
         }
     }
 }
