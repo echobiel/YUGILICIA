@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ConnectionThread extends Thread {
     InputStream input = null;
     OutputStream output = null;
     String btDevAddress = null;
-    String myUUID = "2c75b43e-366f-11e7-a919-92ebcb67fe33";
+    String myUUID = "fe81f701-710c-44e7-8fb4-3b227a4ea1b3";
     boolean server;
     boolean running = false;
 
@@ -195,8 +196,8 @@ public class ConnectionThread extends Thread {
         Bundle bundle = new Bundle();
         bundle.putByteArray("data", data);
         message.setData(bundle);
-        ArenaCliente.handler.sendMessage(message);
-        ArenaServidor.handler.sendMessage(message);
+
+        Arena.handler.sendMessage(message);
     }
 
     /*  Método utilizado pela Activity principal para transmitir uma mensagem ao

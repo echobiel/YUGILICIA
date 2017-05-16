@@ -46,9 +46,7 @@
         <activity
             android:name=".DeviceListActivity"
             android:label="Lista de Dispositivos Pareados" />
-        <activity android:name=".ArenaCliente"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ArenaServidor"
+        <activity android:name=".Arena"
             android:screenOrientation="portrait"/>
     </application>
 

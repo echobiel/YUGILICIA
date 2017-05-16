@@ -74,8 +74,9 @@ public class JogarActivity extends Activity {
         }
         //Se o bluetooth está ativado
         if (mBluetoothAdapter.isEnabled()) {
-
-            startActivity(new Intent(this, ArenaCliente.class));
+            Intent intent = new Intent(this, Arena.class);
+            intent.putExtra("modo","client");
+            startActivity(intent);
 
         }else{
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -94,8 +95,9 @@ public class JogarActivity extends Activity {
         }
         //Se o bluetooth está ativado
         if (mBluetoothAdapter.isEnabled()) {
-
-            startActivity(new Intent(this, ArenaServidor.class));
+            Intent intent = new Intent(this, Arena.class);
+            intent.putExtra("modo","servidor");
+            startActivity(intent);
 
         }else{
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
