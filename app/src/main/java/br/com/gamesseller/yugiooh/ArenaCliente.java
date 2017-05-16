@@ -1,6 +1,8 @@
 package br.com.gamesseller.yugiooh;
 
 import android.bluetooth.BluetoothDevice;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -16,24 +18,21 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class ArenaCliente extends Activity {
     /** Called when the activity is first created. */
 
+    public static int ENABLE_BLUETOOTH = 1;
+    public static int SELECT_PAIRED_DEVICE = 2;
+    public static int SELECT_DISCOVERED_DEVICE = 3;
+
     private static final int REQUEST_ENABLE_BT = 1;
 
-    private final int REQUEST_CONNECT_DEVICE = 1;
     private BluetoothAdapter meuAdaptadorBluetooth = null;
-
-    private BluetoothSocket mmSocket = null;
-    private BluetoothDevice mmDevice = null;
-
-    private InputStream mmInStream = null;
-    private OutputStream mmOutStream = null;
-
-    // Unique UUID for this application
-    private static final UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+    ConnectionThread connect;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class ArenaCliente extends Activity {
                 // Loop through paired devices
                 Intent intent = new Intent();
                 intent.setClass(ArenaCliente.this, DeviceListActivity.class);
-                startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
+                startActivityForResult(intent, ENABLE_BLUETOOTH);
             }
 
         }else{
@@ -74,64 +73,52 @@ public class ArenaCliente extends Activity {
 
     }
 
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == ENABLE_BLUETOOTH) {
+            if(resultCode == RESULT_OK) {
+                Toast.makeText(this, "Bluetooth ativado :D", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this, "Bluetooth não ativado :(", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(requestCode == SELECT_PAIRED_DEVICE || requestCode == SELECT_DISCOVERED_DEVICE) {
+            if(resultCode == RESULT_OK) {
+                Toast.makeText(this, "Você selecionou " + data.getStringExtra("btDevName") + "\n"
+                        + data.getStringExtra("btDevAddress"), Toast.LENGTH_SHORT).show();
 
-        switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
-                Log.d("resultCode", resultCode + "");
-                if (resultCode == Activity.RESULT_OK) {
-                    //Cancelar a descoberta
-                    meuAdaptadorBluetooth.cancelDiscovery();
-
-                    // Obtem o endereço do dispositivo
-                    String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    // Obtem o BluetoothDevice
-                    mmDevice = meuAdaptadorBluetooth.getRemoteDevice(address);
-                    try {
-                        // Cria o socket utilizando o UUID
-                        mmSocket = mmDevice.createRfcommSocketToServiceRecord(MY_UUID);
-                        // Conecta ao dispositivo escolhido
-                        mmSocket.connect();
-                        // Obtem os fluxos de entrada e saida que lidam com transmissões através do socket
-                        mmInStream = mmSocket.getInputStream();
-                        mmOutStream = mmSocket.getOutputStream();
-
-                        // Saida:
-                        // Envio de uma mensagem pelo .write
-                        String enviada = "Teste Rone";
-                        byte[] send = enviada.getBytes();
-                        mmOutStream.write(send);
-
-                        // Entrada:
-                        // bytes returnados da read()
-                        int bytes;
-                        // buffer de memória para o fluxo
-                        byte[] read = new byte[1024];
-
-                        // Continuar ouvindo o InputStream enquanto conectado
-                        // O loop principal é dedicado a leitura do InputStream
-                        while (true) {
-                            try {
-                                // Read from the InputStream
-                                bytes = mmInStream.read(read);
-
-                                String readMessage = new String(read);
-                                Toast.makeText(this, readMessage, Toast.LENGTH_LONG).show();
-
-                            } catch (IOException e) {
-                                Toast.makeText(this, "Ocorreu um erro no recebimento da mensagem!", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                    }
-                    catch(IOException e){
-                        Toast.makeText(this, "Ocorreu um erro! - " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.d("test", "Ocorreu um erro! - " + e.getMessage());
-                    }
-                }
-                break;
+            }
+            else {
+                Toast.makeText(this, "Nenhum dispositivo selecionado :(", Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
+    public void sendMessage(View view) {
+
+        EditText messageBox = (EditText) findViewById(R.id.editText_MessageBox);
+        String messageBoxString = messageBox.getText().toString();
+        byte[] data =  messageBoxString.getBytes();
+        connect.write(data);
+    }
+
+
+    public static Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            Bundle bundle = msg.getData();
+            byte[] data = bundle.getByteArray("data");
+            String dataString= new String(data);
+
+            if(dataString.equals("---N"))
+                Log.d("SEI","Ocorreu um erro durante a conexão D:");
+            else if(dataString.equals("---S"))
+                Log.d("SEI", "Conectado :D");
+            else {
+                Log.d("SEI", new String(data));
+            }
+            Log.d("SEI", "test");
+        }
+    };
 }
