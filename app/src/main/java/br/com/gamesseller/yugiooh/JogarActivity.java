@@ -30,7 +30,9 @@ public class JogarActivity extends Activity {
     ArrayAdapter btDispostivosAdapter;
     ListView dispositivosPareados;
     Context context;
+    Integer btn_clicked;
 
+    private static final int BT_DISABLED = 0;
     private static final int REQUEST_ENABLE_BT = 1;
 
     @Override
@@ -81,6 +83,7 @@ public class JogarActivity extends Activity {
         }else{
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            btn_clicked = 1;
         }
 
     }
@@ -102,8 +105,24 @@ public class JogarActivity extends Activity {
         }else{
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            btn_clicked = 2;
         }
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_ENABLE_BT){
+            if (requestCode != BT_DISABLED){
+                if (btn_clicked == 1){
+                    checarEstadoDoBluetoothCliente();
+                }else if (btn_clicked == 2){
+                    checarEstadoDoBluetoothServer();
+                }
+            }
+        }
+
+    }
 }

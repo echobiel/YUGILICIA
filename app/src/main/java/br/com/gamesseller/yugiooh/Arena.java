@@ -1,6 +1,7 @@
 package br.com.gamesseller.yugiooh;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Arena extends AppCompatActivity {
 
@@ -19,11 +21,14 @@ public class Arena extends AppCompatActivity {
     public static int SELECT_DISCOVERED_DEVICE = 3;
 
     ConnectionThread connect;
+    private static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arena);
+
+        context = this;
 
         Intent intent = getIntent();
         String modo = "";
@@ -71,16 +76,16 @@ public class Arena extends AppCompatActivity {
             String dataString = new String(data);
 
             if (dataString.equals("---N")) {
-                //statusMessage.setText("Ocorreu um erro durante a conexão D:");
+                Toast.makeText(context,"Houve um problema com a conexão !",Toast.LENGTH_LONG).show();
+                context.startActivity(new Intent(context, JogarActivity.class));
             }else if (dataString.equals("---S")){
-                //statusMessage.setText("Conectado :D");
+                Toast.makeText(context,"Conectado com sucesso !",Toast.LENGTH_LONG).show();
             }else {
 
                 Log.d("data", new String(data));
             }
         }
     };
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -99,13 +104,23 @@ public class Arena extends AppCompatActivity {
                 //        + data.getStringExtra("btDevAddress"));
 
                 connect = new ConnectionThread(data.getStringExtra("btDevAddress"));
-                connect.start();
+                try {
+                    connect.start();
+                }catch(Exception e){
+
+                }
             }
             else {
-                //statusMessage.setText("Nenhum dispositivo selecionado :(");
+                Toast.makeText(this,"Não foi possível realizar a conexão !",Toast.LENGTH_LONG).show();
+                startActivity(new Intent(this, JogarActivity.class));
             }
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ConnectionThread ct = new ConnectionThread();
+        ct.cancel();
+    }
 }
