@@ -3,15 +3,29 @@ package br.com.gamesseller.yugiooh;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Arena extends AppCompatActivity {
 
@@ -23,10 +37,18 @@ public class Arena extends AppCompatActivity {
     ConnectionThread connect;
     private static Context context;
 
+    private static ArrayList<String> cartasJogador1 = new ArrayList<>();
+    ArrayList<String> cartasJogador2 = new ArrayList<>();
+    ArrayAdapter cartasAdapterJogador1;
+    ArrayAdapter cartasAdapterJogador2;
+    private static ListView lst_cards;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arena);
+
+        lst_cards = (ListView) findViewById(R.id.lst_cards);
 
         context = this;
 
@@ -58,11 +80,12 @@ public class Arena extends AppCompatActivity {
         connect.start();
     }
 
-    public void sendMessage(View view) {
+    public void sendAction(View view) {
+        EditText idCard = (EditText) findViewById(R.id.editText_idCard);
+        EditText idAction = (EditText) findViewById(R.id.editText_idAction);
+        String informacoes = idCard.getText().toString() + "$" + idAction.getText().toString();
 
-        EditText messageBox = (EditText) findViewById(R.id.editText_MessageBox);
-        String messageBoxString = messageBox.getText().toString();
-        byte[] data =  messageBoxString.getBytes();
+        byte[] data =  informacoes.getBytes();
         connect.write(data);
     }
 
@@ -81,8 +104,46 @@ public class Arena extends AppCompatActivity {
             }else if (dataString.equals("---S")){
                 Toast.makeText(context,"Conectado com sucesso !",Toast.LENGTH_LONG).show();
             }else {
+                String informacoes = new String(data);
+                String[] output = informacoes.split("\\$");
 
-                Log.d("data", new String(data));
+                if (output[1].equals("1")){
+                    if (output[0] != "") {
+                        DataBaseHelper dbHelper = new DataBaseHelper(context);
+                        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+                        Cursor c;
+
+                        c = db.rawQuery("SELECT * FROM tbl_cartas WHERE idCarta = ?", new String[]{output[0]});
+
+                        if (c.getCount() > 0) {
+                            c.moveToFirst();
+
+                            int contador = 1;
+
+                            //Guarda as informações da carta
+                            while (contador <= c.getCount()) {
+
+                                Carta carta = new Carta(c.getString(0), c.getString(2), c.getInt(3),
+                                        c.getInt(4), c.getInt(5), c.getInt(6), c.getInt(7), c.getInt(8), c.getInt(9), c.getInt(0));
+
+                                Log.d("CARTAS", c.getInt(5) + " imagemZoom - " + c.getInt(9));
+
+                                cartasJogador1.add(carta.getNome());
+
+                                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                        context,
+                                        android.R.layout.simple_list_item_1,
+                                        cartasJogador1 );
+
+                                lst_cards.setAdapter(arrayAdapter);
+
+                                c.moveToNext();
+                                contador++;
+                            }
+                        }
+                    }
+                }
             }
         }
     };
@@ -90,15 +151,7 @@ public class Arena extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == ENABLE_BLUETOOTH) {
-            if(resultCode == RESULT_OK) {
-                //statusMessage.setText("Bluetooth ativado :D");
-            }
-            else {
-                //statusMessage.setText("Bluetooth não ativado :(");
-            }
-        }
-        else if(requestCode == SELECT_PAIRED_DEVICE || requestCode == SELECT_DISCOVERED_DEVICE) {
+        if(requestCode == SELECT_PAIRED_DEVICE || requestCode == SELECT_DISCOVERED_DEVICE) {
             if(resultCode == RESULT_OK) {
                 //statusMessage.setText("Você selecionou " + data.getStringExtra("btDevName") + "\n"
                 //        + data.getStringExtra("btDevAddress"));

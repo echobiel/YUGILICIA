@@ -19,13 +19,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/editText_MessageBox"/>
+            android:id="@+id/editText_idCard"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/editText_idAction"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mensagi"
             android:layout_weight="0.2"
-            android:onClick="sendMessage"/>
+            android:onClick="sendAction"/>
     </LinearLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/lst_cards"></ListView>
 
 </LinearLayout>

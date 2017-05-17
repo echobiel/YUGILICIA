@@ -118,8 +118,10 @@ public class JogarActivity extends Activity {
             if (requestCode != BT_DISABLED){
                 if (btn_clicked == 1){
                     checarEstadoDoBluetoothCliente();
+                    btn_clicked = 0;
                 }else if (btn_clicked == 2){
                     checarEstadoDoBluetoothServer();
+                    btn_clicked = 0;
                 }
             }
         }
