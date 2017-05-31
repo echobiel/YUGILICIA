@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">YU GI OOH</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_jogar">JogarActivity</string>
+    <string name="title_activity_jogar"></string>
     <string name="title_activity_inventario">InventarioActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

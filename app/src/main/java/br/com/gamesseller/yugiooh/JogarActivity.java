@@ -1,5 +1,11 @@
 package br.com.gamesseller.yugiooh;
 
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -22,8 +28,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-
-public class JogarActivity extends Activity {
+public class JogarActivity extends AppCompatActivity {
 
     Button btnListaDeDispositivosPareados, btnServer;
     ArrayList<String> listaDispositivosPareados = new ArrayList<>();
@@ -39,12 +44,13 @@ public class JogarActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jogar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         context = this;
 
         btnListaDeDispositivosPareados = (Button)findViewById(R.id.listaDispositivosPareados);
         btnServer = (Button) findViewById(R.id.criarSala);
-        dispositivosPareados = (ListView) findViewById(R.id.lista_dispositivos_pareados);
 
         btDispostivosAdapter = new ArrayAdapter(this, R.layout.device_list, listaDispositivosPareados);
 
@@ -63,6 +69,7 @@ public class JogarActivity extends Activity {
             }
         });
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -127,4 +134,5 @@ public class JogarActivity extends Activity {
         }
 
     }
+
 }

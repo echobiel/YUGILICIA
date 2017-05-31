@@ -72,6 +72,7 @@ public class ConnectionThread extends Thread {
                 estabeleça uma conexão.
                  */
                 btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("Super Bluetooth", UUID.fromString(myUUID));
+
                 btSocket = btServerSocket.accept();
 
                 /*  Se a conexão foi estabelecida corretamente, o socket
@@ -228,16 +229,21 @@ public class ConnectionThread extends Thread {
      */
     public void cancel() {
 
-        try {
+            try {
 
+                running = false;
+                btServerSocket.close();
+                btSocket.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             running = false;
-            btServerSocket.close();
-            btSocket.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        running = false;
+
     }
+
+
+
 
 }

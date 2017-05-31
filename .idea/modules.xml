@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YUGILICIA.iml" filepath="$PROJECT_DIR$/YUGILICIA.iml" />
       <module fileurl="file://$PROJECT_DIR$/YUGIOOH.iml" filepath="$PROJECT_DIR$/YUGIOOH.iml" />
-      <module fileurl="file://$PROJECT_DIR$/YUIGILICIA.iml" filepath="$PROJECT_DIR$/YUIGILICIA.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/libs/dynamicgrid/dynamicgrid.iml" filepath="$PROJECT_DIR$/app/libs/dynamicgrid/dynamicgrid.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/libs/dynamicgrid/dynamicgrid.iml" filepath="$PROJECT_DIR$/app/libs/dynamicgrid/dynamicgrid.iml" />
-      <module fileurl="file://$PROJECT_DIR$/yugilicia.iml" filepath="$PROJECT_DIR$/yugilicia.iml" />
     </modules>
   </component>
 </project>

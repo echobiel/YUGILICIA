@@ -1,16 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="br.com.gamesseller.yugiooh.Arena"
-    tools:showIn="@layout/activity_main2">
+    tools:showIn="@layout/activity_arena"
+    android:background="#000"
+    android:orientation="vertical">
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="0dp"
+                android:layout_weight="0.15"
+                android:text="Jogador 2"
+                android:id="@+id/nome_jogador2"
+                android:textAlignment="center"
+                android:textSize="14dp"
+                android:textColor="#fff"/>
+
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="0dp"
+                android:layout_weight="0.85"
+                android:id="@+id/imagem_jogador2"
+                android:background="@drawable/jailson"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:layout_marginRight="10dp"
+            android:numColumns="auto_fit"
+            android:id="@+id/grid_view_cartas_jogador2"></ListView>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="0.1"
+            android:id="@+id/botao_sair"
+            android:background="@drawable/sair"
+            android:layout_marginLeft="10dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="0dp"
+        android:layout_weight="0.6">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15"
+            android:gravity="center_horizontal">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:id="@+id/deck_oponente"
+                android:background="@drawable/emptycard"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="0.7">
+
+            <GridView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:id="@+id/campo_batalha_oponente"
+                android:layout_marginBottom="5dp"
+                android:numColumns="3"></GridView>
+
+            <GridView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:layout_marginTop="5dp"
+                android:id="@+id/campo_batalha_jogador"
+                android:numColumns="3"></GridView>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:id="@+id/deck_jogador"
+                android:background="@drawable/emptycard"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <GridView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:layout_marginRight="20dp"
+            android:background="#fff"
+            android:numColumns="6"
+            android:id="@+id/grid_view_cartas_jogador"></GridView>
+
+        <LinearLayout
+            android:layout_width="00dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="0dp"
+                android:layout_weight="0.85"
+                android:id="@+id/imagem_jogador"
+                android:background="@drawable/jailson"
+                />
+
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="0dp"
+                android:layout_weight="0.15"
+                android:text="Você"
+                android:id="@+id/nome_jogador"
+                android:textAlignment="center"
+                android:textSize="14dp"
+                android:textColor="#fff"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>
