@@ -14,16 +14,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,6 +51,7 @@ public class Arena extends AppCompatActivity {
     private static ArrayList<Carta> cartasJogador = new ArrayList<>();
     private static List<Carta> lstCartas = new ArrayList<>();
     private static ListView lst_cards;
+    LinearLayout zoom;
 
     public static Integer contagemCartas;
     public static CartaAdapter arrayAdapter;
@@ -53,6 +62,7 @@ public class Arena extends AppCompatActivity {
     TextView nome_jogador;
     TextView nome_jogador2;
     Button botao_sair;
+    Integer idCarta;
     ArrayAdapter cartasAdapterJogador1;
     ArrayAdapter cartasAdapterJogador2;
     public static ConnectionThread connect;
@@ -68,25 +78,14 @@ public class Arena extends AppCompatActivity {
         nome_jogador2 = (TextView)findViewById(R.id.nome_jogador2);
         botao_sair = (Button) findViewById(R.id.botao_sair);
         grid_view_cartas_jogador = (GridView) findViewById(R.id.grid_view_cartas_jogador);
+        zoom = (LinearLayout) findViewById(R.id.zoom);
 
-        botao_sair.setOnClickListener(new View.OnClickListener() {
+        grid_view_cartas_jogador.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                try {
-                    if(modo.equals("cliente")){
-                        String informacoes = "3$4";
-
-                        byte[] data =  informacoes.getBytes();
-                        connect.write(data);
-                        startActivity(new Intent(context, JogarActivity.class));
-                    }else {
-                        finish();
-                        startActivity(new Intent(context, JogarActivity.class));
-                    }
-                }catch(Exception e){
-                    e.getMessage();
-                }
+                idCarta = lstCartasMao.get(position).getIdCarta();
+                zoomImagem(position);
 
             }
         });
@@ -107,6 +106,28 @@ public class Arena extends AppCompatActivity {
         }
 
 
+        botao_sair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    if(modo.equals("client")){
+                        String informacoes = "0$4";
+
+                        byte[] data =  informacoes.getBytes();
+                        connect.write(data);
+
+                    }else {
+                        if (finishMao() == false){
+                            startActivity(new Intent(context, JogarActivity.class));
+                        }
+                    }
+                }catch(Exception e){
+                    e.getMessage();
+                }
+
+            }
+        });
     }
 
     public void searchPairedDevices() {
@@ -137,7 +158,7 @@ public class Arena extends AppCompatActivity {
             String dataString = new String(data);
 
             if (dataString.equals("---N")) {
-                Toast.makeText(context,"Houve um problema com a conexão !",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"A conexão foi finalizada !",Toast.LENGTH_LONG).show();
                 lstCartasMao.clear();
                 context.startActivity(new Intent(context, JogarActivity.class));
             }else if (dataString.equals("---S")){
@@ -151,13 +172,14 @@ public class Arena extends AppCompatActivity {
             }else {
                 String informacoes = new String(data);
                 String[] output = informacoes.split("\\$");
-            if (output[3].equals("4")){
+                if (output[0].equals("0")){
 
-                lstCartas.clear();
-                lstCartasMao.clear();
+                    lstCartas.clear();
+                    lstCartasMao.clear();
+                    Log.d("teste", output[0]);
+                    finishMao();
 
-
-            }else if (output[1].equals("1")){
+                }else if (output[1].equals("1")){
                     if (output[0] != "") {
                         DataBaseHelper dbHelper = new DataBaseHelper(context);
                         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -185,6 +207,7 @@ public class Arena extends AppCompatActivity {
                                 contador++;
                             }
                         }
+                        db.close();
                     }
                 }
             }
@@ -192,27 +215,18 @@ public class Arena extends AppCompatActivity {
     };
 
     private static void colocarDadosNaGridView() {
-
         contagemCartas = 0;
+        while (contagemCartas < 4) {
 
-        if(lstCartas.size() >= 4) {
+            lstCartasMao.add(lstCartas.get(contagemCartas));
 
-            while (contagemCartas < 4) {
+            arrayAdapter = new CartaAdapter(context, lstCartasMao, R.layout.layout_carta);
 
-                lstCartasMao.add(lstCartas.get(contagemCartas));
+            contagemCartas++;
 
-                arrayAdapter = new CartaAdapter(context, lstCartasMao, R.layout.layout_carta);
-
-                contagemCartas++;
-
-            }
-
-            grid_view_cartas_jogador.setAdapter(arrayAdapter);
-
-        }else{
-            Toast.makeText(context, "Adicione cartas no seu inventário e volte a jogar!", Toast.LENGTH_LONG).show();
-            finishMao();
         }
+
+        grid_view_cartas_jogador.setAdapter(arrayAdapter);
     }
 
     private static void montaLstCartas(){
@@ -245,6 +259,8 @@ public class Arena extends AppCompatActivity {
             }
         }
 
+        db.close();
+
     }
 
     @Override
@@ -269,29 +285,46 @@ public class Arena extends AppCompatActivity {
         }
     }
 
-    //Quando é apertado o botão de voltar no celular
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        finishMao();
-
+    public void onBackPressed() {
 
     }
 
-    //Quando é apertado o botão de sair da activity
-    @Override
-    public void finish() {
-        super.finish();
+    public static boolean finishMao(){
 
-        finishMao();
+        if (connect != null) {
+
+            connect.cancel();
+            lstCartasMao.clear();
+            lstCartas.clear();
+            return true;
+
+        }else{
+            return false;
+        }
 
     }
 
-    public static void finishMao(){
+    //Zoom apena dos itens do gridview contendo as cartas do deck
+    public void zoomImagem(int position){
+        int imagem = lstCartasMao.get(position).getImagem();
+        ImageView img_zoom = (ImageView) findViewById(R.id.img_zoom);
 
-        connect.cancel();
-        lstCartasMao.clear();
+        if (imagem == R.drawable.emptycard){
+            zoom.setVisibility(View.INVISIBLE);
+        }else{
+            int imagemZoom = lstCartasMao.get(position).getImagemZoom();
+            Picasso.with(context) // CARTA
+                    .load(imagemZoom)
+                    .into(img_zoom);
 
+            zoom.setVisibility(View.VISIBLE);
+        }
     }
+
+    public void fecharZoom(View view) {
+        zoom.setVisibility(View.INVISIBLE);
+    }
+
 }

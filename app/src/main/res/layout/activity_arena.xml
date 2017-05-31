@@ -9,4 +9,6 @@
 
     <include layout="@layout/content_arena" />
 
+    <include layout="@layout/layout_carta" />
+
 </android.support.design.widget.CoordinatorLayout>

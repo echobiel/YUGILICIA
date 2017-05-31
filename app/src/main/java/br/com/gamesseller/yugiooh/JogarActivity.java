@@ -36,6 +36,7 @@ public class JogarActivity extends AppCompatActivity {
     ListView dispositivosPareados;
     Context context;
     Integer btn_clicked;
+    View mDecorView;
 
     private static final int BT_DISABLED = 0;
     private static final int REQUEST_ENABLE_BT = 1;
@@ -135,4 +136,8 @@ public class JogarActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
 }

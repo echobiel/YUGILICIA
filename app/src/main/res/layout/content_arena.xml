@@ -138,7 +138,6 @@
             android:layout_height="match_parent"
             android:layout_weight="0.9"
             android:layout_marginRight="20dp"
-            android:background="#fff"
             android:numColumns="6"
             android:id="@+id/grid_view_cartas_jogador"></GridView>
 

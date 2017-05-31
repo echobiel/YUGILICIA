@@ -130,6 +130,8 @@ public class InventarioActivity extends AppCompatActivity {
         db = dbHelper.getReadableDatabase();
 
         selectDeck(db);
+
+        db.close();
     }
 
     private void selectCartas(SQLiteDatabase db) {
@@ -205,6 +207,7 @@ public class InventarioActivity extends AppCompatActivity {
         CartaAdapter adapter = new CartaAdapter(this, lstCartas1, R.layout.list_view_item_carta);
 
         grid_view_cartasUser.setAdapter(adapter);
+
     }
 
     private boolean selectCardRepetido(SQLiteDatabase db, Integer idCarta) {
@@ -265,6 +268,7 @@ public class InventarioActivity extends AppCompatActivity {
             Toast.makeText(context,"Já existem 3 cartas no deck !",Toast.LENGTH_SHORT).show();
         }
 
+        db.close();
     }
 
     public void excluirCarta(View view) {
