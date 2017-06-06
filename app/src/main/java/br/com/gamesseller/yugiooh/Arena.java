@@ -75,9 +75,8 @@ public class Arena extends AppCompatActivity {
 
         context = this;
 
-        nome_jogador2 = (TextView)findViewById(R.id.nome_jogador2);
+
         botao_sair = (Button) findViewById(R.id.botao_sair);
-        grid_view_cartas_jogador = (GridView) findViewById(R.id.grid_view_cartas_jogador);
         zoom = (LinearLayout) findViewById(R.id.zoom);
 
         grid_view_cartas_jogador.setOnItemClickListener(new AdapterView.OnItemClickListener() {
